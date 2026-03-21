@@ -14,14 +14,15 @@ import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ProdutosDAO {
     
     Connection conn;
     PreparedStatement st;
-    ResultSet resultset;
-    ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+    ResultSet rs;
+    List<ProdutosDTO> lista = new ArrayList<>();
     
     public void cadastrarProduto (ProdutosDTO produto) throws SQLException{
     String sql= "INSERT INTO produtos (nome,valor,status)VALUES(?,?,?)";
@@ -39,9 +40,34 @@ public class ProdutosDAO {
         
     }
     
-    public ArrayList<ProdutosDTO> listarProdutos(){
+    public List<ProdutosDTO> listarProdutos(){
+        List<ProdutosDTO> lista = new ArrayList <>();
+        try{
+          conn= new conectaDAO().conexao();
+          String sql = "SELECT * FROM  produtos ";
+          st=conn.prepareStatement(sql);
+          rs = st.executeQuery();
+          
+          while(rs.next()){
+              ProdutosDTO pr= new ProdutosDTO();
+              pr.setId(rs.getInt("id"));
+              pr.setNome(rs.getString("nome"));
+              pr.setValor(rs.getInt("valor"));
+              pr.setStatus(rs.getString("status"));
+              lista.add(pr);
+              
+              
+              
+          }
+          
         
-        return listagem;
+        
+        
+        
+        }catch(Exception e ){
+        JOptionPane.showMessageDialog(null, "ERRO AO listar "+e.getMessage());}
+        
+        return lista;
     }
     
     
