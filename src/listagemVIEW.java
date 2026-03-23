@@ -1,22 +1,16 @@
 
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 
-/**
- *
- * @author Adm
- */
 public class listagemVIEW extends javax.swing.JFrame {
 
-    /**
-     * Creates new form listagemVIEW
-     */
+   
     public listagemVIEW() {
         initComponents();
         listarProdutos();
@@ -33,6 +27,7 @@ public void carregarTabela() {
 
         for (ProdutosDTO p : lista) {
             modelo.addRow(new Object[]{
+                p.getId(),
                 p.getNome(),
                 p.getValor(),
                 p.getStatus()
@@ -52,7 +47,7 @@ public void carregarTabela() {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        id_produto_venda = new javax.swing.JTextPane();
+        txtid = new javax.swing.JTextPane();
         btnVender = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         btnVendas = new javax.swing.JButton();
@@ -79,7 +74,7 @@ public void carregarTabela() {
         jLabel2.setFont(new java.awt.Font("Lucida Fax", 0, 14)); // NOI18N
         jLabel2.setText("Vender Produto (ID)");
 
-        jScrollPane2.setViewportView(id_produto_venda);
+        jScrollPane2.setViewportView(txtid);
 
         btnVender.setText("Vender");
         btnVender.addActionListener(new java.awt.event.ActionListener() {
@@ -153,17 +148,47 @@ public void carregarTabela() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
-        String id = id_produto_venda.getText();
-        
-        ProdutosDAO produtosdao = new ProdutosDAO();
-        
-        //produtosdao.venderProduto(Integer.parseInt(id));
-        listarProdutos();
-    }//GEN-LAST:event_btnVenderActionPerformed
+                                         
 
+    try {
+        int id = Integer.parseInt(txtid.getText());
+
+        Connection conn = (Connection) DriverManager.getConnection(
+            "jdbc:mysql://localhost:3306/sistemaleilao?useSSL=false",
+            "root",
+            "058787"
+        );
+
+        String sql = "UPDATE produtos SET status = 'Vendido' WHERE id = ?";
+        PreparedStatement stmt = (PreparedStatement) conn.prepareStatement(sql);
+        stmt.setInt(1, id);
+
+        int resultado = stmt.executeUpdate();
+
+        if (resultado > 0) {
+            JOptionPane.showMessageDialog(null, "Vendido com sucesso!");
+        } else {
+            JOptionPane.showMessageDialog(null, "ID não encontrado!");
+        }
+
+        conn.close();
+
+        carregarTabela(); // atualiza tabela
+        txtid.setText(""); // limpa campo
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Erro!");
+    }
+
+
+   
+     
+  
+    }//GEN-LAST:event_btnVenderActionPerformed
+    
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
-        //vendasVIEW vendas = new vendasVIEW(); 
-        //vendas.setVisible(true);
+        VendasVIEW vendas = new VendasVIEW(); 
+         vendas.setVisible(true);
     }//GEN-LAST:event_btnVendasActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
@@ -209,13 +234,13 @@ public void carregarTabela() {
     private javax.swing.JButton btnVendas;
     private javax.swing.JButton btnVender;
     private javax.swing.JButton btnVoltar;
-    private javax.swing.JTextPane id_produto_venda;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable listaProdutos;
+    private javax.swing.JTextPane txtid;
     // End of variables declaration//GEN-END:variables
 
     private void listarProdutos(){
