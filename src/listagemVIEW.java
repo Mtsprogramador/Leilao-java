@@ -153,7 +153,12 @@ public void carregarTabela() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
-       
+    int linha = listaProdutos.getSelectedRow();
+    int id=(int) listaProdutos.getValueAt(linha,0);
+    
+    ProdutosDAO dao = new ProdutosDAO();
+    dao.venderProduto(id);
+     carregarTabela();
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
