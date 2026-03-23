@@ -1,3 +1,7 @@
+
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -11,11 +15,29 @@ public class VendasVIEW extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VendasVIEW.class.getName());
 
-    /**
-     * Creates new form VendasVIEW
-     */
+    public void carregarProdutosVendidos() {
+    try {
+        ProdutosDAO dao = new ProdutosDAO();
+        List<ProdutosDTO> lista = dao.listaVenda();
+
+        DefaultTableModel modelo = (DefaultTableModel) listaVendas.getModel();
+        modelo.setNumRows(0);
+
+        for (ProdutosDTO p : lista) {
+            modelo.addRow(new Object[]{
+                p.getNome(),
+                p.getValor(),
+                p.getStatus()
+            });
+        }
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(null, "Erro ao carregar vendas!");
+    }
+}
     public VendasVIEW() {
         initComponents();
+        carregarProdutosVendidos();
     }
 
     /**
